@@ -11,7 +11,7 @@
 			}
 			h1 {
 				text-align: center;
-				font-size: 8em;
+				font-size: 4em;
 				margin: 0;
 				font-weight: 200;
 			}
@@ -34,11 +34,10 @@
 				padding: 10%;
 				position: absolute;
 				top: 0;
-				height: 80%;
 				left: 0;
 				width: 80%;
 				background-color: #fff;
-				font-size: 6em;
+				font-size: 1.8em;
 			}
 			.success h1 {
 				font-size: 2em;
@@ -65,16 +64,18 @@
 		</style>
 	</head>
 	<body>
-		<h1>ROC Pass</h1>
-		<figure class="logo">
-			<img src="img/logo.gif">
-		</figure>
-		<a href="#" class="button" data-phone="ios"><img alt="Download on the App Store" src="img/apple.svg"></a>
-		<a href="#" class="button" data-phone="android"><img alt="Get it on Google Play" src="img/google.svg"></a>
+		<div class="main">
+			<h1>ROC Pass</h1>
+			<figure class="logo">
+				<img src="img/logo.gif">
+			</figure>
+			<a href="#" class="button" data-phone="ios" onClick="buttonClick('ios')"><img alt="Download on the App Store" src="img/apple.svg"></a>
+			<a href="#" class="button" data-phone="android" onClick="buttonClick('android')"><img alt="Get it on Google Play" src="img/google.svg"></a>
+		</div>
 		<div class="collect" style="display: none;">
 			<p>The app will be online in another day or two. Want us to send you a download link when it is released?</p>
 			<input type="tel" placeholder="Phone Number" id="number">
-			<button id="submitNumber">Notify Me</button>
+			<button id="submitNumber" onClick="formSubmit()">Notify Me</button>
 		</div>
 		<div class="success" style="display: none;">
 			<h1>Success</h1>
@@ -84,19 +85,21 @@
 			var type = null;
 			var httpRequest;
 
-			for (let button of document.getElementsByClassName('button')) {
+			/*for (var button in document.getElementsByClassName('button')) {
 				button.addEventListener("click", buttonClick);
 			}
-			document.getElementById('submitNumber').addEventListener('click', formSubmit);
+			document.getElementById('submitNumber').addEventListener('click', formSubmit);*/
 
 			document.getElementById('number').addEventListener('input', function (e) {
 				var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
 				e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
 			});
 
-			function buttonClick() {
-				type = this.dataset.phone;
+			function buttonClick(os) {
+				type = os;
 				document.getElementsByClassName('collect')[0].style.display = "block";
+				document.getElementsByClassName('main')[0].style.display = "none";
+				document.getElementsByClassName('success')[0].style.display = "none";
 			}
 
 			function formSubmit() {
@@ -111,9 +114,11 @@
 			function requestDone() {
 				if (httpRequest.readyState === XMLHttpRequest.DONE) {
 					if (httpRequest.status === 200) {
+						document.getElementsByClassName('main')[0].style.display = "none";
+						document.getElementsByClassName('collect')[0].style.display = "none";
 						document.getElementsByClassName('success')[0].style.display = "block";
 					} else {
-						alert("There was a problem with the request.");
+						alert("Please make sure your phone number was entered correctly.");
 					}
 				}
 			}
