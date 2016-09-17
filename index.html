@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<title>The ROC App</title>
+		<style type="text/css">
+			body {
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				margin: 0;
+				padding: 10% 5%;
+				color: #052342;
+				overflow-x: hidden;
+			}
+			h1 {
+				text-align: center;
+				font-size: 8em;
+				margin: 0;
+				font-weight: 200;
+			}
+			.logo {
+				width: 80%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.logo img {
+				width: 100%;
+			}
+			.button {
+				display: block;
+			}
+			.button img {
+				width: 80%;
+				margin: 3% 10%;
+			}
+			.collect, .success {
+				padding: 10%;
+				position: absolute;
+				top: 0;
+				height: 80%;
+				left: 0;
+				width: 80%;
+				background-color: #fff;
+				font-size: 6em;
+			}
+			.success h1 {
+				font-size: 2em;
+			}
+			.collect p {
+				margin-top: 0;
+			}
+			.collect input {
+				display: block;
+				width: 100%;
+				font-size: 1em;
+				border: 2px solid #052342;
+				padding: .5em;
+			}
+			.collect button {
+				display: block;
+				width: 100%;
+				background-color: #052342;
+				color: #fff;
+				font-size: 1em;
+				padding: 0.5em;
+				margin-top: 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>ROC Pass</h1>
+		<figure class="logo">
+			<img src="img/logo.gif">
+		</figure>
+		<a href="#" class="button" data-phone="ios"><img alt="Download on the App Store" src="img/apple.svg"></a>
+		<a href="#" class="button" data-phone="android"><img alt="Get it on Google Play" src="img/google.svg"></a>
+		<div class="collect" style="display: none;">
+			<p>The app will be online in another day or two. Want us to send you a download link when it is released?</p>
+			<input type="tel" placeholder="Phone Number" id="number">
+			<button id="submitNumber">Notify Me</button>
+		</div>
+		<div class="success" style="display: none;">
+			<h1>Success</h1>
+			<p>We'll send you a text with a download link as soon as the app is online.</p>
+		</div>
+		<script type="text/javascript">
+			var type = null;
+			var httpRequest;
+
+			for (let button of document.getElementsByClassName('button')) {
+				button.addEventListener("click", buttonClick);
+			}
+			document.getElementById('submitNumber').addEventListener('click', formSubmit);
+
+			document.getElementById('number').addEventListener('input', function (e) {
+				var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+				e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+			});
+
+			function buttonClick() {
+				type = this.dataset.phone;
+				document.getElementsByClassName('collect')[0].style.display = "block";
+			}
+
+			function formSubmit() {
+				var number = document.getElementById('number').value.replace(/\D/g,"");;
+				httpRequest = new XMLHttpRequest();
+				httpRequest.onreadystatechange = requestDone;
+				httpRequest.open('POST', 'https://api.therocapp.com/phones');
+				httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				httpRequest.send('type=' + encodeURIComponent(type) + '&number=' + encodeURIComponent(number));
+			}
+
+			function requestDone() {
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						document.getElementsByClassName('success')[0].style.display = "block";
+					} else {
+						alert("There was a problem with the request.");
+					}
+				}
+			}
+
+		</script>
+	</body>
+</html>
